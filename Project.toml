@@ -1,0 +1,10 @@
+name = "Garden"
+uuid = "191a0f47-3b55-477a-bc71-68850f508b94"
+authors = ["Owen Lynch <root@owenlynch.org>"]
+version = "0.1.0"
+
+[deps]
+Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
+MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
+ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
