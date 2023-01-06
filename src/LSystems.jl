@@ -5,7 +5,7 @@ export TurtleOpF, Geom, Seq, Branch,
   ConcreteTurtleOp, Concrete,
   DetLSystem, @lsystem,
   concretize,
-  Instruction, Forwards, Turn, Ignore,
+  Instruction, Forwards, Turn, Ignore, Color,
   interpret, runturtle
 
 using MLStyle
@@ -174,6 +174,7 @@ end
 @data Instruction begin
   Forwards(Float64)
   Turn(Float64)
+  Color(Float64, Float64, Float64)
   Ignore
 end
 
@@ -208,6 +209,9 @@ function interpret(op::ConcreteTurtleOp{Instruction}, ctx, s::TurtleState)
       Turn(r) => begin
         s.r = rot(r) * s.r
       end
+      Color(r,g,b) => begin
+        set_source_rgb(ctx, r, g, b)
+      end
       Ignore => nothing
     end
     Seq(ops) => map(op′ -> interpret(op′, ctx, s), ops)
@@ -219,8 +223,13 @@ function interpret(op::ConcreteTurtleOp{Instruction}, ctx, s::TurtleState)
   end
 end
 
-function runturtle(op::ConcreteTurtleOp{Instruction}; w=500, h=500, fp="garden.png", scale=20)
-  c = CairoRGBSurface(w,h);
+function runturtle(op::ConcreteTurtleOp{Instruction}; w=1000, h=1000, fp="garden.png", scale=20)
+  ext = Base.Filesystem.splitext(fp)[2]
+  c = @match ext begin
+    ".png" => CairoRGBSurface(w,h)
+    ".svg" => CairoSVGSurface(fp,w,h)
+  end
+  
   ctx = CairoContext(c);
 
   set_source_rgb(ctx,1,1,1)
@@ -229,7 +238,12 @@ function runturtle(op::ConcreteTurtleOp{Instruction}; w=500, h=500, fp="garden.p
   set_source_rgb(ctx,0,0,0)
   interpret(op, ctx, TurtleState([w/4,h/4], [scale,0]))
 
-  write_to_png(c, "garden.png")
+
+  @match ext begin
+    ".png" => write_to_png(c, fp)
+    ".svg" => finish(c)
+    _ => error("unsupported file extension")
+  end
 end
 
 function iteratefn(f,v,n::Int)

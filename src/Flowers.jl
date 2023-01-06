@@ -25,9 +25,13 @@ end
 dragon_curve = @lsystem Instruction begin
   @geom (+) Turn(pi/2)
   @geom (-) Turn(-pi/2)
+  @geom Red Color(0.9,0.1,0.1)
+  @geom Purple Color(0.7,0.1,0.7)
   @nt A Forwards(1)
-  @init (A;-;A;-;A;-;A)
-  A => (A;-;A;+;A;-;A;-;A)
+  @nt B Forwards(1)
+  @init (Purple;A;-;Red;B;-;Purple;A;-;Red;B)
+  A => (Purple;A;-;Red;B;+;Purple;A;-;Red;B;-;A)
+  B => (Red;B;-;Purple;A;+;Red;B;-;Purple;A;-;B)
 end
 
 fass_curve = @lsystem Instruction begin
@@ -42,11 +46,13 @@ fass_curve = @lsystem Instruction begin
 end
 
 basic_frond = @lsystem Instruction begin
-  @geom (+) Turn(pi/9)
-  @geom (-) Turn(-pi/9)
+  @geom (+) Turn(pi/3)
+  @geom (-) Turn(-pi/3)
+  @geom d Turn(pi/18)
+  @geom nd Turn(-pi/18)
   @nt F Forwards(1)
   @init F
-  F => (F;[+;F];F;[-;F];[F])
+  F => (F;[+;F];d;F;[-;F];nd;F)
 end
 
 end
